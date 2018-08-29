@@ -1,8 +1,6 @@
 package com.tcvm.service;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import com.tcvm.dao.MaterialDao;
 import com.tcvm.dao.MaterialDaoImpl;
@@ -13,34 +11,102 @@ import com.tcvm.vo.Product;
 
 public class ContainerServiceImpl implements ContainerService {
 
+	MaterialDao materialDao = new MaterialDaoImpl();
+	
 	@Override
 	public Boolean checkAvailableQuantity(Product product) {
 		
-		MaterialDao materialDao = new MaterialDaoImpl();
-		
 		Map<MaterialType, Material> materialMap = materialDao.getMaterial(product.getProductType());
 		
-		Double availableTeaCapacity = Container.availableTeaCapacity - 
-				Optional.ofNullable(materialMap.get(MaterialType.TEA).getMaterialConsumptionQuantity()).orElse(0.0) * product.getQuantity();
+		Double availableTeaCapacity = updatedTeaCapacity(materialMap, product.getQuantity());
 		
-		Double availableCoffeeCapacity = Container.availableCoffeeCapacity - 
-				Optional.ofNullable(materialMap.get(MaterialType.COFFEE).getMaterialConsumptionQuantity()).orElse(0.0) * product.getQuantity();
+		Double availableCoffeeCapacity = updatedCoffeeCapacity(materialMap, product.getQuantity());
 		
-		Double availableMilkCapacity = Container.availableMilkCapacity - 
-				Optional.ofNullable(materialMap.get(MaterialType.MILK).getMaterialConsumptionQuantity()).orElse(0.0) * product.getQuantity();
+		Double availableMilkCapacity = updatedMilkCapacity(materialMap, product.getQuantity());
+		
+		Double availableWaterCapacity = updatedWaterCapacity(materialMap, product.getQuantity());
+		
+		Double availableSugarCapacity = updatedSugarCapacity(materialMap, product.getQuantity());
 
-		Double availableWaterCapacity = Container.availableWaterCapacity - 
-				Optional.ofNullable(materialMap.get(MaterialType.WATER).getMaterialConsumptionQuantity()).orElse(0.0) * product.getQuantity();
-		
-		Double availableSugarCapacity = Container.availableSugarCapacity - 
-				Optional.ofNullable(materialMap.get(MaterialType.SUGAR).getMaterialConsumptionQuantity()).orElse(0.0) * product.getQuantity();
-
-		
         if(availableTeaCapacity >=0 && availableCoffeeCapacity >= 0 && 
         		availableMilkCapacity >=0 && availableWaterCapacity >= 0 && availableSugarCapacity >= 0)
               return true;
+        else
+        	throw new RuntimeException("Insufficient Material, Please Try Later!");
 		 
-		return false;
+	}
+	
+	@Override
+	public void updateContainerCapacity(Product product) {
+		
+		Map<MaterialType, Material> materialMap = materialDao.getMaterial(product.getProductType());
+		
+		Container.availableTeaCapacity = updatedTeaCapacity(materialMap, product.getQuantity());
+		
+		Container.availableCoffeeCapacity = updatedCoffeeCapacity(materialMap, product.getQuantity());
+		
+		Container.availableMilkCapacity = updatedMilkCapacity(materialMap, product.getQuantity());
+		
+		Container.availableWaterCapacity = updatedWaterCapacity(materialMap, product.getQuantity());
+		
+		Container.availableSugarCapacity = updatedSugarCapacity(materialMap, product.getQuantity());
+		
+		updateWasteCapacity(materialMap, product.getQuantity());
+		 
+	}
+	
+	
+	private Double updatedTeaCapacity(Map<MaterialType, Material> materialMap, Integer quantity){
+		return Container.availableTeaCapacity - materialMap.get(MaterialType.TEA).getMaterialConsumptionQuantity() * quantity;
+	}
+	
+	private Double updatedCoffeeCapacity(Map<MaterialType, Material> materialMap, Integer quantity){
+		
+		return Container.availableCoffeeCapacity - 
+				materialMap.get(MaterialType.COFFEE).getMaterialConsumptionQuantity() * quantity;
+	}
+	
+	private Double updatedMilkCapacity(Map<MaterialType, Material> materialMap, Integer quantity){
+		
+		return Container.availableMilkCapacity - 
+				materialMap.get(MaterialType.MILK).getMaterialConsumptionQuantity() * quantity;
+	}
+	
+	private Double updatedWaterCapacity(Map<MaterialType, Material> materialMap, Integer quantity){
+		
+		return Container.availableWaterCapacity - 
+				materialMap.get(MaterialType.WATER).getMaterialConsumptionQuantity() * quantity;
+	}
+	
+	private Double updatedSugarCapacity(Map<MaterialType, Material> materialMap, Integer quantity){
+		
+		return Container.availableWaterCapacity - 
+				materialMap.get(MaterialType.SUGAR).getMaterialConsumptionQuantity() * quantity;
+	}
+
+	@Override
+	public void updateWasteCapacity(Map<MaterialType, Material> materialMap, Integer quantity) {
+		
+		Container.coffeeWasteMaterial += materialMap.get(MaterialType.COFFEE).getMaterialWasteQuantity() * quantity;
+		Container.teaWasteMaterial += materialMap.get(MaterialType.TEA).getMaterialWasteQuantity() * quantity;
+		Container.sugarWasteMaterial += materialMap.get(MaterialType.SUGAR).getMaterialWasteQuantity() * quantity;
+		Container.waterWasteMaterial += materialMap.get(MaterialType.WATER).getMaterialWasteQuantity() * quantity;
+		Container.milkWasteMaterial += materialMap.get(MaterialType.MILK).getMaterialWasteQuantity() * quantity;
+		
+	}
+
+	@Override
+	public void checkContainerStatus() {
+		
+		System.out.println("Available Capacity in Containers are: ");
+		System.out.println("***************************************");
+		System.out.println("Water Capacity: " + Container.availableWaterCapacity + " ml");
+		System.out.println("Milk Capacity: " + Container.availableMilkCapacity + " ml");
+		System.out.println("Sugar Capacity: " + Container.availableSugarCapacity + " grams");
+		System.out.println("Tea Capacity: " + Container.availableTeaCapacity + " grams");
+		System.out.println("Coffee Capacity: " + Container.availableCoffeeCapacity + " grams");
+		
+		
 	}
 
 }

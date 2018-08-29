@@ -7,6 +7,19 @@ public class Product {
 	private Double price;
 	private Integer quantity;
 	private Boolean paymentStatus;
+	
+	public Product() {
+		
+	}
+	
+	public Product(ProductType productType, Double price, Integer quantity, Boolean paymentStatus) {
+		super();
+		this.productType = productType;
+		this.price = price;
+		this.quantity = quantity;
+		this.paymentStatus = paymentStatus;
+	}
+	
 	public ProductType getProductType() {
 		return productType;
 	}

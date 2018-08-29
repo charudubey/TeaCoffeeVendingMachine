@@ -1,4 +1,4 @@
-package com.yash.tcvm;
+package com.yash.tcvm.service;
 
 import static org.junit.Assert.*;
 
@@ -29,6 +29,11 @@ public class ProductDispenserServiceImplTest {
 		input.setQuantity(1);
 		
 		productService.placeOrder(input);
+	}
+	
+	@Test
+	public void shouldThrowExceptionWhenMaterialQuantityIsUnavailable() {
+		
 	}
 
 }

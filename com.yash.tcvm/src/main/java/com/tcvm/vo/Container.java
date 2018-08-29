@@ -19,6 +19,12 @@ public class Container {
 	public static Double availableWaterCapacity = 15000.00;
 	public static Double availableMilkCapacity = 10000.00;
 	
+	public static Double teaWasteMaterial = 0.0;
+	public static Double coffeeWasteMaterial = 0.0;
+	public static Double sugarWasteMaterial = 0.0;
+	public static Double waterWasteMaterial = 0.0;
+	public static Double milkWasteMaterial = 0.0;
+	
 	public String getContainerType() {
 		return containerType;
 	}

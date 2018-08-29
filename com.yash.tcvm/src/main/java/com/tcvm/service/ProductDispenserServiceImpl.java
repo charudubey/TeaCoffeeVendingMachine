@@ -1,37 +1,36 @@
 package com.tcvm.service;
 
+import com.tcvm.dao.ProductDao;
+import com.tcvm.dao.ProductDaoImpl;
 import com.tcvm.vo.Product;
 
 public class ProductDispenserServiceImpl implements ProductDispenserService{
 
 	ContainerService containerService = new ContainerServiceImpl();
+	ProductDao productDao = new ProductDaoImpl();
 	
 	@Override
-	public Boolean placeOrder(Product product) {
+	public Double placeOrder(Product product) {
 		
 		if(containerService.checkAvailableQuantity(product)){
-			return true;
+			return calculateProductCost(product);
 		}
 		
-		return false;
+		return null;
 	}
 
 	@Override
 	public Double calculateProductCost(Product product) {
-		// TODO Auto-generated method stub
-		return null;
+		return productDao.getProductPrice(product);
 	}
 
 	@Override
-	public Double verifyAndReturnFunds(Double Price) {
-		// TODO Auto-generated method stub
-		return null;
+	public void dispense(Product product) {
+		
+		System.out.println("Dispensing " + product.getProductType().getType());
+		containerService.updateContainerCapacity(product);
+		
 	}
-
-	@Override
-	public Boolean dispense(Product product) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 }
