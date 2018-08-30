@@ -27,7 +27,6 @@ public class ProductDispenserServiceImpl implements ProductDispenserService{
 	@Override
 	public void dispense(Product product) {
 		
-		System.out.println("Dispensing " + product.getProductType().getType());
 		containerService.updateContainerCapacity(product);
 		
 	}

@@ -2,16 +2,16 @@ package com.tcvm.vo;
 
 public class Container {
 
-	private String containerType;
+	private ContainerType containerType;
 	private String containerTotalCapacity;
 	private String containerAvailableCapacity;
 	private Integer refillingCounter;
 	
-	private final Double totalTeaCapacity = 2000.00;
-	private final Double totalCoffeeCapacity = 2000.00;
-	private final Double totalSugarCapacity = 8000.00;
-	private final Double totalWaterCapacity = 15000.00;
-	private final Double totalMilkCapacity = 10000.00;
+	public static final Double totalTeaCapacity = 2000.00;
+	public static final Double totalCoffeeCapacity = 2000.00;
+	public static final Double totalSugarCapacity = 8000.00;
+	public static final Double totalWaterCapacity = 15000.00;
+	public static final Double totalMilkCapacity = 10000.00;
 	
 	public static Double availableTeaCapacity = 2000.00;
 	public static Double availableCoffeeCapacity = 2000.00;
@@ -25,10 +25,10 @@ public class Container {
 	public static Double waterWasteMaterial = 0.0;
 	public static Double milkWasteMaterial = 0.0;
 	
-	public String getContainerType() {
+	public ContainerType getContainerType() {
 		return containerType;
 	}
-	public void setContainerType(String containerType) {
+	public void setContainerType(ContainerType containerType) {
 		this.containerType = containerType;
 	}
 	public String getContainerTotalCapacity() {

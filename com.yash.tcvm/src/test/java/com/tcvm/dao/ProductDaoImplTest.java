@@ -1,4 +1,4 @@
-package com.yash.tcvm.dao;
+package com.tcvm.dao;
 
 import static org.junit.Assert.assertEquals;
 

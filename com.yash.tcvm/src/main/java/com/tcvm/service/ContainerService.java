@@ -2,6 +2,7 @@ package com.tcvm.service;
 
 import java.util.Map;
 
+import com.tcvm.vo.ContainerType;
 import com.tcvm.vo.Material;
 import com.tcvm.vo.MaterialType;
 import com.tcvm.vo.Product;
@@ -15,5 +16,7 @@ public interface ContainerService {
 	public void updateWasteCapacity(Map<MaterialType, Material> materialMap, Integer quantity);
 	
 	public void checkContainerStatus();
+	
+	public Boolean refillContainer(ContainerType containerType, Double refillAmount);
 	
 }

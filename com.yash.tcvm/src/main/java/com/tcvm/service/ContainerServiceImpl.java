@@ -5,6 +5,7 @@ import java.util.Map;
 import com.tcvm.dao.MaterialDao;
 import com.tcvm.dao.MaterialDaoImpl;
 import com.tcvm.vo.Container;
+import com.tcvm.vo.ContainerType;
 import com.tcvm.vo.Material;
 import com.tcvm.vo.MaterialType;
 import com.tcvm.vo.Product;
@@ -108,5 +109,51 @@ public class ContainerServiceImpl implements ContainerService {
 		
 		
 	}
+
+	@Override
+	public Boolean refillContainer(ContainerType containerType, Double refillAmount) {
+
+		Boolean refillStatus = false;
+		
+		if(containerType.equals(ContainerType.Milk)){
+			if(Container.totalMilkCapacity - Container.availableMilkCapacity >= refillAmount){
+				Container.availableMilkCapacity += refillAmount; 
+				refillStatus = true;
+			}
+				
+		}
+		
+		if(containerType.equals(ContainerType.Water)){
+			if(Container.totalWaterCapacity - Container.availableWaterCapacity <= refillAmount){
+				Container.availableWaterCapacity += refillAmount; 
+				refillStatus = true;
+			}
+				
+		}
+		
+		if(containerType.equals(ContainerType.Sugar)){
+			if(Container.totalSugarCapacity - Container.availableSugarCapacity <= refillAmount){
+				Container.availableSugarCapacity += refillAmount; 
+				refillStatus = true;
+			}
+		}
+		
+		if(containerType.equals(ContainerType.Coffee)){
+			if(Container.totalCoffeeCapacity - Container.availableCoffeeCapacity <= refillAmount){
+				Container.availableCoffeeCapacity += refillAmount; 
+				refillStatus = true;
+			}
+		}
+		
+		if(containerType.equals(ContainerType.Tea)){
+			if(Container.totalTeaCapacity - Container.availableTeaCapacity <= refillAmount){
+				Container.availableTeaCapacity += refillAmount; 
+				refillStatus = true;
+			}
+		}
+		
+		return refillStatus;
+	}
+	
 
 }

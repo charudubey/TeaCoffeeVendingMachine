@@ -1,4 +1,4 @@
-package com.yash.tcvm.service;
+package com.tcvm.service;
 
 import static org.junit.Assert.*;
 
@@ -12,11 +12,17 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.sun.corba.se.impl.presentation.rmi.ExceptionHandler;
+import com.tcvm.dao.MaterialDao;
 import com.tcvm.service.ContainerService;
 import com.tcvm.service.ContainerServiceImpl;
+import com.tcvm.vo.Container;
+import com.tcvm.vo.ContainerType;
 import com.tcvm.vo.Material;
 import com.tcvm.vo.MaterialType;
 import com.tcvm.vo.Product;
@@ -25,6 +31,10 @@ import com.tcvm.vo.ProductType;
 @RunWith(MockitoJUnitRunner.class)
 public class ContainerServiceImplTest {
 
+	@Mock
+	MaterialDao materialDao;
+	
+	@InjectMocks
 	ContainerService containerService = new ContainerServiceImpl();
 	
 	@Rule
@@ -40,19 +50,37 @@ public class ContainerServiceImplTest {
 	public void shouldReturnTrueWhenTeaContentsAreAvaliable(){
 		
 		Product input = new Product();
-		input.setProductType(ProductType.TEA);
-		input.setQuantity(5);
+		input.setProductType(ProductType.COFFEE);
+		input.setQuantity(2);
+		
+		Map<MaterialType, Material> materialList = new HashMap<MaterialType, Material>();
+		materialList.put(MaterialType.COFFEE, new Material(MaterialType.COFFEE, 4.0, 1.0, ProductType.COFFEE));
+		materialList.put(MaterialType.WATER, new Material(MaterialType.WATER, 20.0, 3.0, ProductType.COFFEE));
+		materialList.put(MaterialType.MILK, new Material(MaterialType.MILK, 80.0, 8.0, ProductType.COFFEE));
+		materialList.put(MaterialType.SUGAR, new Material(MaterialType.SUGAR, 15.0, 2.0, ProductType.COFFEE));
+		materialList.put(MaterialType.TEA, new Material(MaterialType.TEA, 0.0, 0.0, ProductType.COFFEE));
+		
+		Mockito.when(materialDao.getMaterial(input.getProductType())).thenReturn(materialList);
 		
 		boolean actual = containerService.checkAvailableQuantity(input);
 		Assert.assertEquals(true, actual);
 	}
 	
 	@Test
-	public void shouldThrowExceptionWhenTeaContentsAreUnavaliable(){
+	public void shouldThrowExceptionWhenCoffeeContentsAreUnavaliable(){
 		
 		Product input = new Product();
-		input.setProductType(ProductType.TEA);
+		input.setProductType(ProductType.COFFEE);
 		input.setQuantity(5000);
+		
+		Map<MaterialType, Material> materialList = new HashMap<MaterialType, Material>();
+		materialList.put(MaterialType.COFFEE, new Material(MaterialType.COFFEE, 4.0, 1.0, ProductType.COFFEE));
+		materialList.put(MaterialType.WATER, new Material(MaterialType.WATER, 20.0, 3.0, ProductType.COFFEE));
+		materialList.put(MaterialType.MILK, new Material(MaterialType.MILK, 80.0, 8.0, ProductType.COFFEE));
+		materialList.put(MaterialType.SUGAR, new Material(MaterialType.SUGAR, 15.0, 2.0, ProductType.COFFEE));
+		materialList.put(MaterialType.TEA, new Material(MaterialType.TEA, 0.0, 0.0, ProductType.COFFEE));
+		
+		Mockito.when(materialDao.getMaterial(input.getProductType())).thenReturn(materialList);
 		
 		expectedEx.expect(RuntimeException.class);
 		expectedEx.expectMessage("Insufficient Material, Please Try Later!");
@@ -83,11 +111,20 @@ public class ContainerServiceImplTest {
 		containerService.updateWasteCapacity(input, 4);
 	} 
 	
-	/*@Test
+	@Test
 	public void shouldDisplayContainerStatus(){
 		
+		containerService.checkContainerStatus();
 		
-	} */
+	} 
+	
+	@Test
+	public void shouldReturnTrueWhenRefillContainerIsSuccessfull(){
+		Container.availableMilkCapacity = 2000.0;
+		Boolean actual = containerService.refillContainer(ContainerType.Milk, 200.00);
+		assertTrue(actual);
+		
+	} 
 
 
 }

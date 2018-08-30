@@ -1,23 +1,35 @@
 package com.tcvm.controller;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import com.tcvm.service.ContainerService;
 import com.tcvm.service.ContainerServiceImpl;
 import com.tcvm.service.ProductDispenserService;
 import com.tcvm.service.ProductDispenserServiceImpl;
+import com.tcvm.vo.ContainerType;
 import com.tcvm.vo.Product;
 import com.tcvm.vo.ProductType;
 
 public class MenuController {
 
-	static Scanner scanner = new Scanner(System.in);
+	Scanner scanner = new Scanner(System.in);
+	ProductDispenserService productDispenserService;
+	ContainerService containerService;
 	
-	public static void main(String[] args) {
-		callSelectedOption();
+	public MenuController() {
+		productDispenserService = new ProductDispenserServiceImpl();
+		containerService = new ContainerServiceImpl();
+		//scanner = new Scanner(System.in);
 	}
 	
-	private static String displayMenuOptions(){
+	public MenuController(Scanner scanner, ProductDispenserService productDispenserService, ContainerService containerService) {
+		productDispenserService = new ProductDispenserServiceImpl();
+		containerService = new ContainerServiceImpl();
+		scanner = new Scanner(System.in);
+	}
+	
+	private String displayMenuOptions(){
 		System.out.println(
 				  "1. Tea\n"
 				+ "2. Black Tea\n"
@@ -30,22 +42,24 @@ public class MenuController {
 				+ "9. Exit TCVM");
 		
 		String inputChoice = scanner.next();
+
 		return inputChoice;
 	}
 	
-	private static void callSelectedOption(){
+	public void callMenu(){
+		
+		Product order = new Product();
 		System.out.println("Please select option from the following");
-		ProductDispenserService productDispenserService = new ProductDispenserServiceImpl();
-		ContainerService containerService = new ContainerServiceImpl();
+		
 		
 		String inputChoice = displayMenuOptions();
-		Product order = new Product();
+		
 		
 		if(validateInputOption(inputChoice)){
 			System.out.println("Please enter Quantity ");
 			try {
-				int q = scanner.nextInt();
-				order.setQuantity(q);
+				int quantity = scanner.nextInt();
+				order.setQuantity(quantity);
 			} catch(NumberFormatException e){
 				throw new NumberFormatException("Please Enter Valid Quantity");
 			}
@@ -69,7 +83,8 @@ public class MenuController {
 				break;
 
 			case "5":
-				
+				Integer containerType = selectRefillContainer();
+				refillContainer(ContainerType.getById(containerType));
 				break;
 
 			case "6":
@@ -90,7 +105,7 @@ public class MenuController {
 
 			default:
 				System.out.println("Please select valid choice");
-				callSelectedOption();
+				callMenu();
 				break;
 			}
 			
@@ -113,7 +128,7 @@ public class MenuController {
 						
 						productDispenserService.dispense(order);
 						
-						callSelectedOption();
+						callMenu();
 						
 					}
 				}
@@ -121,7 +136,51 @@ public class MenuController {
 			
 	}
 	
-	private static Boolean validateInputOption(String inputChoice){
+	public void refillContainer(ContainerType containerType){
+		
+		ContainerService containerService = new ContainerServiceImpl();
+		
+		System.out.println("Please enter refill quantity");
+		Double getRefillAmount = scanner.nextDouble();
+		
+		containerService.refillContainer(containerType, getRefillAmount);
+		
+	}
+	
+	public Integer selectRefillContainer(){
+		
+		//Scanner scanner = new Scanner(System.in);
+		Integer inputChoice = null; 
+		
+		System.out.println("Please select container type: ");
+		System.out.println(
+				  "1. Water Container\n"
+				+ "2. Milk Container\n"
+				+ "3. Coffee Container\n"
+				+ "4. Tea Container\n"
+				+ "5. SugarContainer\n");
+		
+		try{
+			inputChoice = scanner.nextInt();
+			
+			if(inputChoice<=5 && inputChoice>0)
+				return inputChoice;
+			else{
+				System.out.println("Please provide valid input!");
+				selectRefillContainer();
+			}
+			
+		} catch(InputMismatchException e){
+			System.out.println("Please provide numbers only!");
+			selectRefillContainer();
+		}
+		
+		return inputChoice;
+		
+		
+	}
+	
+	private Boolean validateInputOption(String inputChoice){
 		
 		if(Integer.parseInt(inputChoice)<=4 && Integer.parseInt(inputChoice)>0){
 			return true;

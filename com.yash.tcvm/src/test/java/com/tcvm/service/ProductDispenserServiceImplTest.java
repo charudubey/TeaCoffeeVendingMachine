@@ -1,4 +1,4 @@
-package com.yash.tcvm.service;
+package com.tcvm.service;
 
 import static org.junit.Assert.*;
 
