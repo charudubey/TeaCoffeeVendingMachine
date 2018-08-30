@@ -119,6 +119,13 @@ public class ContainerServiceImplTest {
 	} 
 	
 	@Test
+	public void shouldResetContainers(){
+		
+		containerService.resetContainers();
+		
+	} 
+	
+	@Test
 	public void shouldReturnTrueWhenRefillContainerIsSuccessfull(){
 		Container.availableMilkCapacity = 2000.0;
 		Boolean actual = containerService.refillContainer(ContainerType.Milk, 200.00);

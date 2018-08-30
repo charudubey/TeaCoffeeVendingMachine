@@ -113,7 +113,7 @@ public class ContainerServiceImpl implements ContainerService {
 	@Override
 	public Boolean refillContainer(ContainerType containerType, Double refillAmount) {
 
-		Boolean refillStatus = false;
+		Boolean refillStatus = false; 
 		
 		if(containerType.equals(ContainerType.Milk)){
 			if(Container.totalMilkCapacity - Container.availableMilkCapacity >= refillAmount){
@@ -121,7 +121,7 @@ public class ContainerServiceImpl implements ContainerService {
 				refillStatus = true;
 			}
 				
-		}
+		} 
 		
 		if(containerType.equals(ContainerType.Water)){
 			if(Container.totalWaterCapacity - Container.availableWaterCapacity <= refillAmount){
@@ -153,6 +153,27 @@ public class ContainerServiceImpl implements ContainerService {
 		}
 		
 		return refillStatus;
+	}
+
+	@Override
+	public void resetContainers() {
+	
+		System.out.println("Resetting Containers... ");
+		
+		Container.availableCoffeeCapacity = Container.totalCoffeeCapacity;
+		Container.availableMilkCapacity = Container.totalMilkCapacity;
+		Container.availableSugarCapacity = Container.totalSugarCapacity;
+		Container.availableTeaCapacity = Container.totalTeaCapacity;
+		Container.availableWaterCapacity = Container.totalWaterCapacity;
+		
+		System.out.println("Updated Capacity in Containers are: ");
+		System.out.println("***************************************");
+		System.out.println("Water Capacity: " + Container.availableWaterCapacity + " ml");
+		System.out.println("Milk Capacity: " + Container.availableMilkCapacity + " ml");
+		System.out.println("Sugar Capacity: " + Container.availableSugarCapacity + " grams");
+		System.out.println("Tea Capacity: " + Container.availableTeaCapacity + " grams");
+		System.out.println("Coffee Capacity: " + Container.availableCoffeeCapacity + " grams");
+		
 	}
 	
 

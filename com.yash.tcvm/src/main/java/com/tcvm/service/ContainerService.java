@@ -19,4 +19,5 @@ public interface ContainerService {
 	
 	public Boolean refillContainer(ContainerType containerType, Double refillAmount);
 	
+	public void resetContainers();
 }

@@ -2,16 +2,16 @@ package com.tcvm.util;
 
 	import java.util.Scanner;
 
-    public class InputOutput {
+    public class CustomScanner {
 
         private final Scanner scanner;
 
-        public InputOutput()
+        public CustomScanner()
         {
            this(new Scanner(System.in));
         }
 
-        InputOutput(Scanner scanner)
+        CustomScanner(Scanner scanner)
         {
             this.scanner  = scanner;
         }

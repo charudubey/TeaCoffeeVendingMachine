@@ -1,36 +1,40 @@
 package com.tcvm.controller;
 
-import java.util.logging.Logger;
+import java.util.InputMismatchException;
 
 import com.tcvm.service.ContainerService;
 import com.tcvm.service.ContainerServiceImpl;
 import com.tcvm.service.ProductDispenserService;
 import com.tcvm.service.ProductDispenserServiceImpl;
-import com.tcvm.util.InputOutput;
+import com.tcvm.util.CustomScanner;
 import com.tcvm.vo.ContainerType;
 import com.tcvm.vo.Product;
 import com.tcvm.vo.ProductType;
 
 public class MenuContoller {
 
-	InputOutput input;
+	CustomScanner customScanner;
 	ProductDispenserService productDispenserService;
 	ContainerService containerService;
 	 
 	
 	public MenuContoller() {
 		
+		customScanner = new CustomScanner();
+		productDispenserService = new ProductDispenserServiceImpl();
+		containerService = new ContainerServiceImpl();
+		
 	}
 	
-	public MenuContoller(InputOutput input, ProductDispenserService productDispenserService, ContainerService containerService) {
+	public MenuContoller(CustomScanner customScanner, ProductDispenserService productDispenserService, ContainerService containerService) {
 		this.productDispenserService = productDispenserService;
 		this.containerService = containerService;
-		this.input = input;
+		this.customScanner = customScanner;
 	}
 
 	public String callMenu() {
 		
-		String selectedOption = null;
+		String selectedOption;
 		System.out.println("Please select an option from the following");
 		
 		System.out.println(
@@ -44,7 +48,7 @@ public class MenuContoller {
 				+ "8. Reset Container\n"
 				+ "9. Exit TCVM");
 		
-		selectedOption = input.getInputString();
+		selectedOption = customScanner.getInputString();
 		
 		return selectedOption;
 	}
@@ -59,8 +63,9 @@ public class MenuContoller {
 		
 		if(quantity!=null){
 			order.setQuantity(quantity);
-			callSelectedOption(order, inputChoice);
 		}
+		
+		callSelectedOption(order, inputChoice);
 	}
 
 	public Boolean dispenseBeverage(Product order) {
@@ -71,7 +76,7 @@ public class MenuContoller {
 		 
 		if(costOfProduct!=null){
 			System.out.println("Please enter amount: Rs. " + costOfProduct);
-			Double enteredAmount = input.getInputDouble();
+			Double enteredAmount = customScanner.getInputDouble();
 			
 			if(enteredAmount < costOfProduct){
 				System.out.println("Please enter correct Amount: Rs. " + costOfProduct);
@@ -82,7 +87,6 @@ public class MenuContoller {
 				
 				productDispenserService.dispense(order);
 				isDispensed = true;
-				//callMenuOption();
 			}
 		} 
 		
@@ -95,7 +99,7 @@ public class MenuContoller {
 		
 		if(validateInputOption(inputChoice)){
 			System.out.println("Please enter Quantity ");
-				quantity = input.getInputInteger();
+				quantity = customScanner.getInputInteger();
 		}
 		
 		return quantity;
@@ -108,6 +112,47 @@ public class MenuContoller {
 		}
 		
 		return false;
+	}
+	
+	public Integer selectRefillContainer(){
+		
+		Integer inputChoice = 0; 
+		
+		System.out.println("Please select container type: ");
+		System.out.println(
+				  "1. Water Container\n"
+				+ "2. Milk Container\n"
+				+ "3. Coffee Container\n"
+				+ "4. Tea Container\n"
+				+ "5. SugarContainer\n");
+		
+			inputChoice = customScanner.getInputInteger();
+			
+			if(inputChoice<=5 && inputChoice>0)
+				return inputChoice;
+			else{
+				System.out.println("Please provide valid input!");
+				goToMenu();
+			}
+			
+		return inputChoice;
+	}
+	
+	public void refillContainer(ContainerType containerType){
+		
+		ContainerService containerService = new ContainerServiceImpl();
+		
+		System.out.println("Please enter refill quantity");
+		Double getRefillAmount = customScanner.getInputDouble();
+		
+		Boolean refillStatus = containerService.refillContainer(containerType, getRefillAmount);
+		if(refillStatus) {
+			System.out.println("Container Refilled Successfully!");
+		} else {
+			System.out.println("Refill unsuccessfull! Please try later!");
+		}
+		goToMenu();
+		
 	}
 
 	private void callSelectedOption(Product order, String inputChoice) {
@@ -130,8 +175,8 @@ public class MenuContoller {
 			break;
 
 		case "5":
-			/*Integer containerType = selectRefillContainer();
-			refillContainer(ContainerType.getById(containerType));*/
+			Integer containerType = selectRefillContainer();
+			refillContainer(ContainerType.getById(containerType));
 			break;
 
 		case "6":
@@ -140,29 +185,38 @@ public class MenuContoller {
 
 		case "7":
 			containerService.checkContainerStatus();
+			goToMenu();
 			break;
 
 		case "8":
-
+			containerService.resetContainers();
+			goToMenu();
 			break;
 
 		case "9":
-
 			break;
 
 		default:
 			System.out.println("Please select valid choice");
-			callMenuOption();
+			goToMenu();
 			break;
 		}
 		
 		if(validateInputOption(Integer.parseInt(inputChoice))){
 			Boolean isDispensed = dispenseBeverage(order);
-			if(isDispensed)
+			if(isDispensed) {
 				System.out.println("Dispensing " + order.getProductType().getType());
+				goToMenu();
+			}
+				
 		}
-			
-		
+	}
+	
+	private void goToMenu() {
+		System.out.println("Please press '0' to go to menu!");
+		Integer menuInput = customScanner.getInputInteger();
+		if(menuInput==0)
+			callMenuOption();
 	}
 	
 	
