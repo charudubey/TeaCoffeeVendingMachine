@@ -12,8 +12,17 @@ import com.tcvm.vo.Product;
 
 public class ContainerServiceImpl implements ContainerService {
 
-	MaterialDao materialDao = new MaterialDaoImpl();
+	MaterialDao materialDao;
 	
+	public ContainerServiceImpl() {
+		materialDao = new MaterialDaoImpl();
+	}
+	
+	/*public ContainerServiceImpl(MaterialDao materialDao) {
+		this.materialDao = materialDao;
+	}*/
+	
+	 
 	@Override
 	public Boolean checkAvailableQuantity(Product product) {
 		
@@ -118,36 +127,41 @@ public class ContainerServiceImpl implements ContainerService {
 		if(containerType.equals(ContainerType.Milk)){
 			if(Container.totalMilkCapacity - Container.availableMilkCapacity >= refillAmount){
 				Container.availableMilkCapacity += refillAmount; 
+				Container.refillCounterForMilkContainer++;
 				refillStatus = true;
 			}
-				
+				 
 		} 
 		
 		if(containerType.equals(ContainerType.Water)){
-			if(Container.totalWaterCapacity - Container.availableWaterCapacity <= refillAmount){
+			if(Container.totalWaterCapacity - Container.availableWaterCapacity >= refillAmount){
 				Container.availableWaterCapacity += refillAmount; 
+				Container.refillCounterForWaterContainer++;
 				refillStatus = true;
 			}
 				
 		}
 		
 		if(containerType.equals(ContainerType.Sugar)){
-			if(Container.totalSugarCapacity - Container.availableSugarCapacity <= refillAmount){
+			if(Container.totalSugarCapacity - Container.availableSugarCapacity >= refillAmount){
 				Container.availableSugarCapacity += refillAmount; 
+				Container.refillCounterForSugarContainer++;
 				refillStatus = true;
 			}
 		}
 		
 		if(containerType.equals(ContainerType.Coffee)){
-			if(Container.totalCoffeeCapacity - Container.availableCoffeeCapacity <= refillAmount){
+			if(Container.totalCoffeeCapacity - Container.availableCoffeeCapacity >= refillAmount){
 				Container.availableCoffeeCapacity += refillAmount; 
+				Container.refillCounterForCoffeeContainer++;
 				refillStatus = true;
 			}
 		}
 		
 		if(containerType.equals(ContainerType.Tea)){
-			if(Container.totalTeaCapacity - Container.availableTeaCapacity <= refillAmount){
-				Container.availableTeaCapacity += refillAmount; 
+			if(Container.totalTeaCapacity - Container.availableTeaCapacity >= refillAmount){
+				Container.availableTeaCapacity += refillAmount;
+				Container.refillCounterForMilkContainer++;
 				refillStatus = true;
 			}
 		}

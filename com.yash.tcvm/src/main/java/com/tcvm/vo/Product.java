@@ -1,23 +1,19 @@
 package com.tcvm.vo;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Product {
 
 	//private Integer productId;
 	private ProductType productType;
-	private Double price;
+	//private Double price;
 	private Integer quantity;
-	private Boolean paymentStatus;
+	
+	public static Map<ProductType, Integer> totalItemsSold = new HashMap<ProductType, Integer>();
 	
 	public Product() {
 		
-	}
-	
-	public Product(ProductType productType, Double price, Integer quantity, Boolean paymentStatus) {
-		super();
-		this.productType = productType;
-		this.price = price;
-		this.quantity = quantity;
-		this.paymentStatus = paymentStatus;
 	}
 	
 	public ProductType getProductType() {
@@ -26,34 +22,16 @@ public class Product {
 	public void setProductType(ProductType productType) {
 		this.productType = productType;
 	}
-	public Double getPrice() {
+	/*public Double getPrice() {
 		return price;
 	}
 	public void setPrice(Double price) {
 		this.price = price;
-	}
+	}*/
 	public Integer getQuantity() {
 		return quantity;
 	}
 	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
 	}
-	public Boolean getPaymentStatus() {
-		return paymentStatus;
-	}
-	public void setPaymentStatus(Boolean paymentStatus) {
-		this.paymentStatus = paymentStatus;
-	}
-	
-	/*public Integer getProductId() {
-		return productId;
-	}
-	public void setProductId(Integer productId) {
-		this.productId = productId;
-	}*/
-	
-	
-	
-	
-	
 }

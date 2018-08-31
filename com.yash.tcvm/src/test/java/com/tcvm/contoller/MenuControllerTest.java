@@ -1,15 +1,17 @@
 package com.tcvm.contoller;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyDouble;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -19,6 +21,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.tcvm.controller.MenuContoller;
 import com.tcvm.service.ContainerService;
 import com.tcvm.service.ProductDispenserService;
+import com.tcvm.service.ReportService;
 import com.tcvm.util.CustomScanner;
 import com.tcvm.vo.Container;
 import com.tcvm.vo.ContainerType;
@@ -37,38 +40,33 @@ public class MenuControllerTest {
 	@Mock 
 	ContainerService containerService;
 	
+	@Mock 
+	ReportService reportService;
+	
 	@InjectMocks
 	MenuContoller menuContoller;
 	
-	@Test
-	public void shouldReturnMenuOption(){
-		
-		when(input.getInputString()).thenReturn("2");
-		
-		String actual = menuContoller.callMenu();
-		
-		assertEquals("2", actual);
-		verify(input).getInputString();
-	}
+	
 	
 	@Test
 	public void shouldGetBlackTeaBeverageOption(){
 		
 		when(input.getInputString()).thenReturn("2");
 		when(input.getInputDouble()).thenReturn(5.0);
-		when(input.getInputInteger()).thenReturn(1);
+		when(input.getInputInteger()).thenReturn(1).thenReturn(1);
 		menuContoller.callMenuOption();
 		
 		verify(input).getInputString();
 		
 	}
-
+ 
 	@Test
 	public void shouldGetTeaBeverageOption(){
 		
 		when(input.getInputString()).thenReturn("1");
+		when(input.getInputInteger()).thenReturn(2).thenReturn(1);
 		when(input.getInputDouble()).thenReturn(20.0);
-		when(input.getInputInteger()).thenReturn(2);
+		
 		menuContoller.callMenuOption();
 		
 		verify(input).getInputString();
@@ -80,7 +78,7 @@ public class MenuControllerTest {
 		
 		when(input.getInputString()).thenReturn("4");
 		when(input.getInputDouble()).thenReturn(40.0);
-		when(input.getInputInteger()).thenReturn(4);
+		when(input.getInputInteger()).thenReturn(4).thenReturn(1);
 		menuContoller.callMenuOption();
 		
 		verify(input).getInputString();
@@ -92,13 +90,13 @@ public class MenuControllerTest {
 		
 		when(input.getInputString()).thenReturn("3");
 		when(input.getInputDouble()).thenReturn(45.0);
-		when(input.getInputInteger()).thenReturn(3);
+		when(input.getInputInteger()).thenReturn(3).thenReturn(1);
 		menuContoller.callMenuOption();
 		
 		verify(input).getInputString();
 		
 	}
-
+		
 	@Test
 	public void shouldGetOrderQuantityWhenBeverageIsSelected(){
 		
@@ -113,11 +111,12 @@ public class MenuControllerTest {
 	@Test
 	public void shouldNotGetQuantityWhenBeverageIsNotSelected(){
 		
-		when(input.getInputString()).thenReturn("6");
-		when(input.getInputInteger()).thenReturn(3);
+		when(input.getInputString()).thenReturn("12");
+		when(input.getInputInteger()).thenReturn(1);
 		menuContoller.callMenuOption();
 		
-		verify(input, never()).getInputInteger();
+		verify(input).getInputString();
+		verify(input).getInputInteger();
 		
 	}
 	
@@ -142,13 +141,13 @@ public class MenuControllerTest {
 		order.setProductType(ProductType.BLACK_COFFEE);
 		order.setQuantity(new Integer(2));
 		
-		when(productDispenserService.calculateProductCost(order)).thenReturn(new Double(20.0));
+		when(productDispenserService.placeOrder(order)).thenReturn(new Double(20.0));
 		when(input.getInputString()).thenReturn("1");
 		when(input.getInputInteger()).thenReturn(3);
-		when(input.getInputDouble()).thenReturn(new Double(20.0));
+		when(input.getInputDouble()).thenReturn(new Double(10.0));
 		Boolean actual = menuContoller.dispenseBeverage(order);
+		assertFalse(actual);
 		
-		assertTrue(actual);
 	}
 	
 	@Test
@@ -189,6 +188,19 @@ public class MenuControllerTest {
 	}
 	
 	@Test
+	public void shouldCallMenuOptionsTwice(){
+		
+		when(input.getInputString()).thenReturn("8");
+		when(input.getInputInteger()).thenReturn(0).thenReturn(1);
+		doNothing().when(containerService).resetContainers();
+		menuContoller.callMenuOption();
+		
+		verify(input, times(2)).getInputString();
+		verify(input, times(2)).getInputInteger();
+		verify(containerService, times(2)).resetContainers();
+	}
+	
+	@Test
 	public void shouldReturnValidOptionForRefillContainer(){
 		
 		when(input.getInputInteger()).thenReturn(2);
@@ -209,19 +221,124 @@ public class MenuControllerTest {
 	}
 	
 	@Test
+	public void shouldExitTheSystemIfCalledExit(){
+		
+		when(input.getInputString()).thenReturn("9");
+		menuContoller.callMenuOption();
+		
+		verify(input).getInputString();
+	}
+	
+	@Test
 	public void shouldCallRefillContainerWhenSendingValidEntry(){
 		
 		Container.availableTeaCapacity = 500.0;
 		when(input.getInputString()).thenReturn("5");
 		when(input.getInputInteger()).thenReturn(4);
 		when(input.getInputDouble()).thenReturn(200.0);
-		when(containerService.refillContainer(any(ContainerType.class), 200.0)).thenReturn(true);
+		when(containerService.refillContainer(any(ContainerType.class), anyDouble())).thenReturn(true);
 		menuContoller.callMenuOption();
 		
 		verify(input).getInputString();
-		verify(input).getInputInteger();
+		verify(input, times(2)).getInputInteger();
 		verify(input).getInputDouble();
-		verify(containerService, times(1)).refillContainer(any(ContainerType.class), 200.0);
+		verify(containerService).refillContainer(any(ContainerType.class), anyDouble());
+	}
+	
+	@Test
+	public void shouldReturnUnsuccessfullMessageWhenRefillContainerIsCalled(){
+		
+		Container.availableTeaCapacity = 500.0;
+		when(input.getInputString()).thenReturn("5");
+		when(input.getInputInteger()).thenReturn(4);
+		when(input.getInputDouble()).thenReturn(200.0);
+		when(containerService.refillContainer(any(ContainerType.class), anyDouble())).thenReturn(false);
+		menuContoller.callMenuOption();
+		
+		verify(input).getInputString();
+		verify(input, times(2)).getInputInteger();
+		verify(input).getInputDouble();
+		verify(containerService).refillContainer(any(ContainerType.class), anyDouble());
+	}
+	
+	@Test
+	public void shouldCallReportsMenu(){
+		
+		when(input.getInputString()).thenReturn("6");
+		when(input.getInputInteger()).thenReturn(1);
+		menuContoller.callMenuOption();
+		
+		verify(input).getInputString();
+	}
+
+	@Test
+	public void shouldCallInvalidOptionForReportsMenu(){
+		
+		when(input.getInputString()).thenReturn("6");
+		when(input.getInputInteger()).thenReturn(5).thenReturn(1);
+		doNothing().when(reportService).generateTeaCoffeeReportDrinkwise();
+		menuContoller.callMenuOption(); 
+		
+		verify(input).getInputString();
+		verify(input, times(4)).getInputInteger();
+		verify(reportService).generateTeaCoffeeReportDrinkwise();
+	}
+
+	
+	@Test
+	public void shouldCallDrinkwiseSoldReport(){
+		
+		when(input.getInputString()).thenReturn("6");
+		when(input.getInputInteger()).thenReturn(1);
+		doNothing().when(reportService).generateTeaCoffeeReportDrinkwise();
+		
+		menuContoller.callMenuOption();
+		
+		verify(input).getInputString();
+		verify(input, times(2)).getInputInteger();
+		verify(reportService).generateTeaCoffeeReportDrinkwise();
+	}
+	
+	@Test
+	public void shouldCallAllCupsAndPriceReport(){
+		
+		when(input.getInputString()).thenReturn("6");
+		when(input.getInputInteger()).thenReturn(2);
+		doNothing().when(reportService).generateTotalTeaCoffeeReport();
+		
+		menuContoller.callMenuOption();
+		
+		verify(input).getInputString();
+		verify(input, times(2)).getInputInteger();
+		verify(reportService).generateTotalTeaCoffeeReport();
+	}
+	
+	@Test
+	public void shouldCallContainersStatusReport(){
+		
+		when(input.getInputString()).thenReturn("6");
+		when(input.getInputInteger()).thenReturn(3);
+		doNothing().when(reportService).containerStatusReport();
+		
+		menuContoller.callMenuOption();
+		
+		verify(input).getInputString();
+		verify(input, times(2)).getInputInteger();
+		verify(reportService).containerStatusReport();
+	}
+	
+	@Test
+	public void shouldCallRefillContainerStatusReport(){
+		
+		when(input.getInputString()).thenReturn("6");
+		when(input.getInputInteger()).thenReturn(4);
+		doNothing().when(reportService).refillingCounterStatus();
+		
+		menuContoller.callMenuOption();
+		
+		verify(input).getInputString();
+		verify(input, times(2)).getInputInteger();
+		verify(reportService).refillingCounterStatus();
 	}
 	
 

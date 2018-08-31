@@ -95,6 +95,15 @@ public class ContainerServiceImplTest {
 		input.setProductType(ProductType.BLACK_COFFEE);
 		input.setQuantity(5);
 		
+		Map<MaterialType,Material> materialList = new HashMap<>();
+		materialList.put(MaterialType.TEA, new Material(MaterialType.TEA, 5.0, 1.0, ProductType.TEA));
+		materialList.put(MaterialType.WATER, new Material(MaterialType.WATER, 60.0, 5.0, ProductType.TEA));
+		materialList.put(MaterialType.MILK, new Material(MaterialType.MILK, 40.0, 4.0, ProductType.TEA));
+		materialList.put(MaterialType.SUGAR, new Material(MaterialType.SUGAR, 15.0, 2.0, ProductType.TEA));
+		materialList.put(MaterialType.COFFEE, new Material(MaterialType.COFFEE, 0.0, 0.0, ProductType.TEA));
+		
+		Mockito.when(materialDao.getMaterial(input.getProductType())).thenReturn(materialList);
+		
 		containerService.updateContainerCapacity(input);
 	} 
 
@@ -126,12 +135,44 @@ public class ContainerServiceImplTest {
 	} 
 	
 	@Test
-	public void shouldReturnTrueWhenRefillContainerIsSuccessfull(){
+	public void shouldReturnTrueWhenRefillMilkContainerIsSuccessfull(){
 		Container.availableMilkCapacity = 2000.0;
 		Boolean actual = containerService.refillContainer(ContainerType.Milk, 200.00);
 		assertTrue(actual);
 		
 	} 
+	
+	@Test
+	public void shouldReturnTrueWhenRefillWaterContainerIsSuccessfull(){
+		Container.availableWaterCapacity = 12000.0;
+		Boolean actual = containerService.refillContainer(ContainerType.Water, 2000.00);
+		assertTrue(actual);
+		
+	} 
+	
+	@Test
+	public void shouldReturnTrueWhenRefillSugarContainerIsSuccessfull(){
+		Container.availableSugarCapacity = 1500.0;
+		Boolean actual = containerService.refillContainer(ContainerType.Sugar, 200.00);
+		assertTrue(actual);
+		
+	}
+	
+	@Test
+	public void shouldReturnTrueWhenRefillCoffeeContainerIsSuccessfull(){
+		Container.availableCoffeeCapacity = 1500.0;
+		Boolean actual = containerService.refillContainer(ContainerType.Coffee, 200.00);
+		assertTrue(actual);
+		
+	}
+	
+	@Test
+	public void shouldReturnTrueWhenRefillTeaContainerIsSuccessfull(){
+		Container.availableTeaCapacity = 1200.0;
+		Boolean actual = containerService.refillContainer(ContainerType.Tea, 200.00);
+		assertTrue(actual);
+		
+	}
 
 
 }

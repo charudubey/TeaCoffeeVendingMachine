@@ -29,6 +29,6 @@ package com.tcvm.util;
         public Double getInputDouble() {
 
             return scanner.nextDouble();
-        }
+        } 
     }
 	

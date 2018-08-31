@@ -20,9 +20,9 @@ public enum ContainerType {
 	         return id;
 	     }
 	     
-	     public String getName() { 
+	     /*public String getName() { 
 	         return name;
-	     }
+	     }*/
 	     
 	     public static ContainerType getById(int id){
 	    	 

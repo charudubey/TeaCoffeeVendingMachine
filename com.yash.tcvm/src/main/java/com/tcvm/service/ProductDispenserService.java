@@ -9,5 +9,7 @@ public interface ProductDispenserService {
 	public Double calculateProductCost(Product product);
 	
 	public void dispense(Product product);
+
+	public void updateItemsSoldCount(Product product);
 	
 }

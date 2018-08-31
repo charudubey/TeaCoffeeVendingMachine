@@ -1,11 +1,11 @@
 package com.tcvm.controller;
 
-import java.util.InputMismatchException;
-
 import com.tcvm.service.ContainerService;
 import com.tcvm.service.ContainerServiceImpl;
 import com.tcvm.service.ProductDispenserService;
 import com.tcvm.service.ProductDispenserServiceImpl;
+import com.tcvm.service.ReportService;
+import com.tcvm.service.ReportServiceImpl;
 import com.tcvm.util.CustomScanner;
 import com.tcvm.vo.ContainerType;
 import com.tcvm.vo.Product;
@@ -16,26 +16,28 @@ public class MenuContoller {
 	CustomScanner customScanner;
 	ProductDispenserService productDispenserService;
 	ContainerService containerService;
-	 
+	ReportService reportService;
+	  
 	
 	public MenuContoller() {
 		
 		customScanner = new CustomScanner();
 		productDispenserService = new ProductDispenserServiceImpl();
 		containerService = new ContainerServiceImpl();
-		
+		reportService = new ReportServiceImpl();
 	}
 	
-	public MenuContoller(CustomScanner customScanner, ProductDispenserService productDispenserService, ContainerService containerService) {
+	public MenuContoller(CustomScanner customScanner, ProductDispenserService productDispenserService, ContainerService containerService, ReportService reportService) {
 		this.productDispenserService = productDispenserService;
 		this.containerService = containerService;
 		this.customScanner = customScanner;
+		this.reportService = reportService;
 	}
 
 	public String callMenu() {
 		
 		String selectedOption;
-		System.out.println("Please select an option from the following");
+		System.out.println("\nPlease select an option from the following");
 		
 		System.out.println(
 				  "1. Tea\n"
@@ -58,15 +60,15 @@ public class MenuContoller {
 		Product order = new Product();
 		
 		String inputChoice = callMenu();
-		
+		 
 		Integer quantity = getOrderQuantityForBeverage(Integer.parseInt(inputChoice));
 		
 		if(quantity!=null){
 			order.setQuantity(quantity);
 		}
-		
 		callSelectedOption(order, inputChoice);
-	}
+		
+	} 
 
 	public Boolean dispenseBeverage(Product order) {
 		
@@ -134,16 +136,14 @@ public class MenuContoller {
 				System.out.println("Please provide valid input!");
 				goToMenu();
 			}
-			
+			 
 		return inputChoice;
 	}
 	
 	public void refillContainer(ContainerType containerType){
 		
-		ContainerService containerService = new ContainerServiceImpl();
-		
 		System.out.println("Please enter refill quantity");
-		Double getRefillAmount = customScanner.getInputDouble();
+		Double getRefillAmount = customScanner.getInputDouble(); 
 		
 		Boolean refillStatus = containerService.refillContainer(containerType, getRefillAmount);
 		if(refillStatus) {
@@ -180,7 +180,7 @@ public class MenuContoller {
 			break;
 
 		case "6":
-
+			selectReportOption();
 			break;
 
 		case "7":
@@ -194,6 +194,7 @@ public class MenuContoller {
 			break;
 
 		case "9":
+			System.out.println("You are now Exiting the system!");
 			break;
 
 		default:
@@ -212,11 +213,40 @@ public class MenuContoller {
 		}
 	}
 	
+	private void selectReportOption() {
+		
+		System.out.println("Please select Report to be generated.");
+		
+		System.out.println("1. Total Tea-Coffee Sale Report Drink Wise (Cup and Cost)\n"
+						+ "2. Total Tea-Coffee Sale (Cup and Cost)\n"
+						+ "3. Container Status Report (Quantity of Material Present)\n"
+						+ "4. Refilling Counter (How many times refilling is done)");
+		
+			int inputChoice = customScanner.getInputInteger();
+			
+			if(inputChoice==1)
+				reportService.generateTeaCoffeeReportDrinkwise();
+			else if (inputChoice == 2)
+				reportService.generateTotalTeaCoffeeReport();
+			else if(inputChoice == 3)
+				reportService.containerStatusReport();
+			else if (inputChoice == 4)
+				reportService.refillingCounterStatus();
+			else{
+				System.out.println("Please enter valid choice!");
+				selectReportOption();
+			}
+			goToMenu();
+		
+	}
+
 	private void goToMenu() {
 		System.out.println("Please press '0' to go to menu!");
 		Integer menuInput = customScanner.getInputInteger();
-		if(menuInput==0)
+		if(menuInput==0){
 			callMenuOption();
+		}
+			
 	}
 	
 	
