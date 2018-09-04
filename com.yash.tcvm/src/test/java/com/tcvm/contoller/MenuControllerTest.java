@@ -11,6 +11,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Scanner;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,11 +20,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.tcvm.controller.MenuContoller;
+import com.tcvm.controller.AppLauncher;
+import com.tcvm.controller.CustomScanner;
+//import com.tcvm.controller.AppLauncher;
+import com.tcvm.controller.MenuController;
 import com.tcvm.service.ContainerService;
 import com.tcvm.service.ProductDispenserService;
 import com.tcvm.service.ReportService;
-import com.tcvm.util.CustomScanner;
 import com.tcvm.vo.Container;
 import com.tcvm.vo.ContainerType;
 import com.tcvm.vo.Product;
@@ -31,6 +35,7 @@ import com.tcvm.vo.ProductType;
 @RunWith(MockitoJUnitRunner.class)
 public class MenuControllerTest {
 
+	
 	@Mock
 	CustomScanner input;
 	
@@ -44,7 +49,7 @@ public class MenuControllerTest {
 	ReportService reportService;
 	
 	@InjectMocks
-	MenuContoller menuContoller;
+	MenuController menuContoller;
 	
 	
 	
@@ -58,6 +63,14 @@ public class MenuControllerTest {
 		
 		verify(input).getInputString();
 		
+	}
+	
+	@Test
+	public void shouldCallDefaultMethod(){
+		
+		menuContoller = new MenuController();
+		AppLauncher appLauncher = new AppLauncher();
+		CustomScanner customScanner = new CustomScanner();
 	}
  
 	@Test
@@ -142,6 +155,21 @@ public class MenuControllerTest {
 		order.setQuantity(new Integer(2));
 		
 		when(productDispenserService.placeOrder(order)).thenReturn(new Double(20.0));
+		when(input.getInputString()).thenReturn("1");
+		when(input.getInputInteger()).thenReturn(3);
+		when(input.getInputDouble()).thenReturn(new Double(10.0));
+		Boolean actual = menuContoller.dispenseBeverage(order);
+		assertFalse(actual);
+		
+	}
+	
+	@Test
+	public void shouldReturnFalseWhenAmountIsNullWhileDispenseBeverage(){
+		Product order = new Product();
+		order.setProductType(ProductType.BLACK_COFFEE);
+		order.setQuantity(new Integer(2));
+		
+		when(productDispenserService.placeOrder(order)).thenReturn(null);
 		when(input.getInputString()).thenReturn("1");
 		when(input.getInputInteger()).thenReturn(3);
 		when(input.getInputDouble()).thenReturn(new Double(10.0));

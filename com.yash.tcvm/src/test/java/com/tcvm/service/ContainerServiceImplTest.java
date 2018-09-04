@@ -136,6 +136,7 @@ public class ContainerServiceImplTest {
 	
 	@Test
 	public void shouldReturnTrueWhenRefillMilkContainerIsSuccessfull(){
+		Container container = new Container();
 		Container.availableMilkCapacity = 2000.0;
 		Boolean actual = containerService.refillContainer(ContainerType.Milk, 200.00);
 		assertTrue(actual);

@@ -28,6 +28,7 @@ public class MaterialDaoImplTest {
 	@Test
 	public void shouldReturnMaterialListForSpecificProductType() {
 		MaterialDao materialDao = new MaterialDaoImpl();
+		
 		Map<MaterialType, Material> expected = new HashMap<>();
 		expected.put(MaterialType.TEA, new Material(MaterialType.TEA, 3.0, 0.0, ProductType.BLACK_TEA));
 		expected.put(MaterialType.WATER, new Material(MaterialType.WATER, 100.0, 12.0, ProductType.BLACK_TEA));
@@ -35,7 +36,7 @@ public class MaterialDaoImplTest {
 		expected.put(MaterialType.COFFEE, new Material(MaterialType.COFFEE, 0.0, 0.0, ProductType.BLACK_TEA));
 		expected.put(MaterialType.MILK, new Material(MaterialType.MILK, 0.0, 0.0, ProductType.BLACK_TEA));
 		
-		
+		MaterialType.TEA.getType();
 		Map<MaterialType, Material> actual = materialDao.getMaterial(ProductType.BLACK_TEA);
 
         assertEquals(expected.size(), actual.size());

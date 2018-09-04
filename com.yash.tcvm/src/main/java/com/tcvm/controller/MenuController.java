@@ -6,12 +6,11 @@ import com.tcvm.service.ProductDispenserService;
 import com.tcvm.service.ProductDispenserServiceImpl;
 import com.tcvm.service.ReportService;
 import com.tcvm.service.ReportServiceImpl;
-import com.tcvm.util.CustomScanner;
 import com.tcvm.vo.ContainerType;
 import com.tcvm.vo.Product;
 import com.tcvm.vo.ProductType;
 
-public class MenuContoller {
+public class MenuController {
 
 	CustomScanner customScanner;
 	ProductDispenserService productDispenserService;
@@ -19,7 +18,7 @@ public class MenuContoller {
 	ReportService reportService;
 	  
 	
-	public MenuContoller() {
+	public MenuController() {
 		
 		customScanner = new CustomScanner();
 		productDispenserService = new ProductDispenserServiceImpl();
@@ -27,7 +26,7 @@ public class MenuContoller {
 		reportService = new ReportServiceImpl();
 	}
 	
-	public MenuContoller(CustomScanner customScanner, ProductDispenserService productDispenserService, ContainerService containerService, ReportService reportService) {
+	public MenuController(CustomScanner customScanner, ProductDispenserService productDispenserService, ContainerService containerService, ReportService reportService) {
 		this.productDispenserService = productDispenserService;
 		this.containerService = containerService;
 		this.customScanner = customScanner;
@@ -111,9 +110,9 @@ public class MenuContoller {
 		
 		if(inputChoice<=4 && inputChoice>0){
 			return true;
+		} else{
+			return false;
 		}
-		
-		return false;
 	}
 	
 	public Integer selectRefillContainer(){
@@ -130,8 +129,9 @@ public class MenuContoller {
 		
 			inputChoice = customScanner.getInputInteger();
 			
-			if(inputChoice<=5 && inputChoice>0)
+			if(inputChoice<=5 && inputChoice>0){
 				return inputChoice;
+			}
 			else{
 				System.out.println("Please provide valid input!");
 				goToMenu();
